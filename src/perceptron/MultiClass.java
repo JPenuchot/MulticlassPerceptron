@@ -3,7 +3,7 @@
  * 		- Théophile Walter
  * 		- Jules Pénuchot
  * 
- * Both from Paris-Sud in Orsay, France
+ * Both from Paris-Sud University in Orsay, France
  */
 
 package perceptron;
