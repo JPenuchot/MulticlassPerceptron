@@ -71,6 +71,9 @@ public class MultiClass {
 				addVect(vdParam, vdUpdate);
 				
 				fmatW[j] = vdParam;
+				
+				dLearningRate *= .8;
+				
 			}
 		}
 		
