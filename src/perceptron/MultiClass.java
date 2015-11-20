@@ -82,7 +82,7 @@ public class MultiClass {
 				
 				fmatW[j] = vdParam;
 				
-				dLearningRate *= .8;
+				dLearningRate *= dLRMultiplier;
 				
 			}
 		}
