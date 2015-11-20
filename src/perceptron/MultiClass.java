@@ -49,6 +49,46 @@ public class MultiClass {
 		fmatW = new double[iClassAmt][iParamSize + 1];
 	}
 	
+	/*	Adds a data vector to the avdTrainData ArrayList.
+	 * The data vector's size must be of ParamSize.
+	 */
+	public void addTrainData(double vdData[]){
+		if(vdData.length != iParamSize)
+			return;
+		
+		double vdRes[] = new double[iParamSize + 1];
+		vdRes[0] = 1;
+		for(int i = 0; i < vdData.length; i++)
+			vdRes[i+1] = vdData[i];
+		
+		avdTrainData.add(vdRes);
+	}
+	
+	/*	Adds a data vector to the avdTestData ArrayList.
+	 * The data vector's size must be of ParamSize.
+	 */
+	public void addTestData(double vdData[]){
+		if(vdData.length != iParamSize)
+			return;
+		
+		double vdRes[] = new double[iParamSize + 1];
+		vdRes[0] = 1;
+		for(int i = 0; i < vdData.length; i++)
+			vdRes[i+1] = vdData[i];
+		
+		avdTestData.add(vdRes);
+	}
+	
+	/*	Adds a label to the aiTrainLabels ArrayList. */
+	public void addTrainLabel(Integer iLabel){
+		aiTrainLabels.add(iLabel);
+	}
+	
+	/*	Adds a label to the aiTestLabels ArrayList. */
+	public void addTestLabel(Integer iLabel){
+		aiTestLabels.add(iLabel);
+	}
+	
 	/*	Returns the synaptic response for a given neuron/class. */
 	public double synapticResponse(double[] dvParam, int iNeuronNumber){	return VectUtils.dotProduct(dvParam, fmatW[iNeuronNumber]);	}
 	
@@ -61,6 +101,7 @@ public class MultiClass {
 	/*	Executes an epoch. */
 	public double epoch(){
 		double dErr = 0.;
+		double dRate = dLearningRate;
 				
 		for(int i = 0; i < avdTrainData.size(); i++){
 			for(int j = 0; j < iClassAmt; j++){
@@ -70,20 +111,39 @@ public class MultiClass {
 				double dGk = Math.tanh(synapticResponse(avdTrainData.get(i), j));
 				double dGk_ = (aiTrainLabels.get(i) == j ? 1. : -1.);
 				
-				double dErrD = Math.pow((dGk - dGk_), 2);
-				dErrD *= .5;
+				double dErrD = Math.pow((dGk - dGk_), 2) / 2.;
 				
 				dErr += dErrD;
 				
 				double vdParam[] = fmatW[j];
 				double vdUpdate[] = fmatW[j];
-				VectUtils.multVect(vdUpdate, - dLearningRate * (dGk - dGk_) * (1 - (dGk * dGk)));
+				VectUtils.multVect(vdUpdate, - dRate * (dGk - dGk_));
 				VectUtils.addVect(vdParam, vdUpdate);
 				
 				fmatW[j] = vdParam;
 				
-				dLearningRate *= dLRMultiplier;
+				dRate *= dLRMultiplier;
+			}
+		}
+		
+		return dErr;
+	}
+	
+	/*	Runs tests on the test dataset and returns the error rate. */
+	public double test(){
+		double dErr = 0.;
+		
+		for(int i = 0; i < avdTestData.size(); i++){
+			for(int j = 0; j < iClassAmt; j++){
+				//	Par rapport au cours :
+				//	dGk_ = ~Gk
+				//	dGk = Gk
+				double dGk = Math.tanh(synapticResponse(avdTestData.get(i), j));
+				double dGk_ = (aiTestLabels.get(i) == j ? 1. : -1.);
 				
+				double dErrD = Math.pow((dGk - dGk_), 2) / 2.;
+				
+				dErr += dErrD;
 			}
 		}
 		
