@@ -11,18 +11,22 @@ package perceptron;
 
 import java.util.*;
 import java.lang.Math;
+import perceptron.VectUtils;
 
-public class MultiClass {
-	public static void main(String args[]){
-		System.out.println("With love from Orsay.");
-	}
-	
+public class MultiClass {	
 	//	Amount of classes
 	private int iClassAmt;
 	//	Size of a parameter
 	private int iParamSize;
 	//	Learning rate
 	public double dLearningRate = 1.;
+	//	Learning rate multiplier
+	public double dLRMultiplier = .8;
+	
+	//	Maximum amount of iterations.
+	int iMaxIterations = 100;
+	//	Maximum tolerated error rate before iMaxIterations iterations were executed.
+	double dEpsilon = .1;
 	
 	//	Neurons' parameters
 	double fmatW[][];
@@ -45,10 +49,16 @@ public class MultiClass {
 		fmatW = new double[iClassAmt][iParamSize + 1];
 	}
 	
-	//	Returns the synaptic response for a given neuron/class.
-	public double synapticResponse(double[] dvParam, int iNeuronNumber){	return dotProduct(dvParam, fmatW[iNeuronNumber]);	}
+	/*	Returns the synaptic response for a given neuron/class. */
+	public double synapticResponse(double[] dvParam, int iNeuronNumber){	return VectUtils.dotProduct(dvParam, fmatW[iNeuronNumber]);	}
 	
-	//	Executes an epoch
+	/*	Trains the model. */
+	public void trainModel(){
+		for(int i = 0; i < iMaxIterations && epoch() > dEpsilon; i++);
+		return;
+	}
+	
+	/*	Executes an epoch. */
 	public double epoch(){
 		double dErr = 0.;
 				
@@ -67,8 +77,8 @@ public class MultiClass {
 				
 				double vdParam[] = fmatW[j];
 				double vdUpdate[] = fmatW[j];
-				multVect(vdUpdate, - dLearningRate * (dGk - dGk_) * (1 - (dGk * dGk)));
-				addVect(vdParam, vdUpdate);
+				VectUtils.multVect(vdUpdate, - dLearningRate * (dGk - dGk_) * (1 - (dGk * dGk)));
+				VectUtils.addVect(vdParam, vdUpdate);
 				
 				fmatW[j] = vdParam;
 				
@@ -80,6 +90,7 @@ public class MultiClass {
 		return dErr;
 	}
 	
+	/*	Classifies given data. */
 	public int classify(double[] dvParam){
 		double dvSR[] = synapticResponses(dvParam);
 		
@@ -95,6 +106,7 @@ public class MultiClass {
 		return iRes;
 	}
 	
+	/*	Returns an array containing the synaptic response of each neuron for given data. */
 	public double[] synapticResponses(double[] dvParam){
 		double res[] = new double[fmatW.length];
 		
@@ -104,26 +116,4 @@ public class MultiClass {
 		
 		return res;
 	}
-	
-//		Computes A and B's dot product
-	public static double dotProduct(double adA[], double adB[]){
-		float dRes = 0f;
-		for(int i = 0; i < adA.length; i++){
-			dRes += adA[i] * adB[i];
-		}
-		return dRes;
-	}
-	
-	//	afds B to A
-	public static void addVect(double adA[], double adB[]){
-		for(int i = 0; i < adA.length; i++)
-			adA[i] += adB[i];
-	}
-	
-	//	Multiplies A per Fact
-	public static void multVect(double adA[], double dFact){
-		for(int i = 0; i < adA.length; i++)
-			adA[i] *= dFact;
-	}
-
 }
