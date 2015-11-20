@@ -81,6 +81,9 @@ public class MultiClass {
 				VectUtils.addVect(vdParam, vdUpdate);
 				
 				fmatW[j] = vdParam;
+				
+				dLearningRate *= .8;
+				
 			}
 		}
 		
