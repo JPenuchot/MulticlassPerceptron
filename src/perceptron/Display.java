@@ -43,17 +43,17 @@ public class Display {
 	}
 	
 	/* Adding a line to the render */
-	public static void addCurve(double [][] line, Color c) {
+	public void addCurve(double [][] line, Color c) {
 		plot2D.addLinePlot( Integer.toString(iLines), c, line);
 		iLines++;
 	}
 	
 	/* Displays the graphical window */
-	public static void show() {
+	public void show() {
 		show (600, 600);
 	}
 	
-	public static void show(int width, int height) {
+	public void show(int width, int height) {
 		JFrame frame = new JFrame("MultiClass Perceptron");
 		frame.setSize(width, height);
 		frame.setContentPane(plot2D);
