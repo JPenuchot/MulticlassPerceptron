@@ -50,7 +50,7 @@ public class MultiClass {
 	}
 	
 	/*	Adds a data vector to the avdTrainData ArrayList.
-	 * The data vector's size must be of ParamSize.
+	 * The data vector's size must be equal to iParamSize.
 	 */
 	public void addTrainData(double vdData[]){
 		if(vdData.length != iParamSize)
@@ -65,7 +65,7 @@ public class MultiClass {
 	}
 	
 	/*	Adds a data vector to the avdTestData ArrayList.
-	 * The data vector's size must be of ParamSize.
+	 * The data vector's size must be equal to iParamSize.
 	 */
 	public void addTestData(double vdData[]){
 		if(vdData.length != iParamSize)
@@ -79,6 +79,24 @@ public class MultiClass {
 		avdTestData.add(vdRes);
 	}
 	
+	/*	Adds an array of data to the training dataset.
+	 * Data vectors' sizes must be equal to iParamSize.
+	 */
+	public void addTrainData(ArrayList<double[]> avdData){
+		for(double[] vdData: avdData){
+			addTrainData(vdData);
+		}
+	}
+	
+	/*	Adds an array of data to the test dataset.
+	 * Data vectors' sizes must be equal to iParamSize.
+	 */
+	public void addTestData(ArrayList<double[]> avdData){
+		for(double[] vdData: avdData){
+			addTestData(vdData);
+		}
+	}
+	
 	/*	Adds a label to the aiTrainLabels ArrayList. */
 	public void addTrainLabel(Integer iLabel){
 		aiTrainLabels.add(iLabel);
@@ -87,6 +105,20 @@ public class MultiClass {
 	/*	Adds a label to the aiTestLabels ArrayList. */
 	public void addTestLabel(Integer iLabel){
 		aiTestLabels.add(iLabel);
+	}
+	
+	/*	Adds an array of labels to the training dataset. */
+	public void addTrainLabel(ArrayList<Integer> aiLabels){
+		for(Integer iLabel: aiLabels){
+			addTrainLabel(iLabel);
+		}
+	}
+	
+	/*	Adds an array of labels to the test dataset. */
+	public void addTestLabel(ArrayList<Integer> aiLabels){
+		for(Integer iLabel: aiLabels){
+			addTestLabel(iLabel);
+		}
 	}
 	
 	/*	Returns the synaptic response for a given neuron/class. */
