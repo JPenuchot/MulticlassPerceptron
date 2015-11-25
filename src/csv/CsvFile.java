@@ -65,14 +65,14 @@ public class CsvFile {
     	return max_line;
     }
     
-    public float[] getData(int index) {
+    public double[] getData(int index) {
     	assert index>=0 : "the index should be positive";
     	assert index<max_line: "index too high!";
     	
     	String[] target = data.get(index);
-    	float[] dataline = new float[target.length-1];
+    	double[] dataline = new double[target.length-1];
     	for(int i=0; i<dataline.length; i++) 
-    		dataline[i] = Float.parseFloat(target[i]);
+    		dataline[i] = Double.parseDouble(target[i]);
     	
     	return dataline;
     }
@@ -110,7 +110,7 @@ public class CsvFile {
     	File myfile = new File(path);
     	CsvFile mycsv = new CsvFile(myfile);
     	
-    	ArrayList<float[]> d = new ArrayList<float[]>();
+    	ArrayList<double[]> d = new ArrayList<double[]>();
     	ArrayList<String> s = new ArrayList<String>();
     	ArrayList<Integer> c = new ArrayList<Integer>();
     	d.add(mycsv.getData(59));

@@ -39,6 +39,10 @@ public class MultiClass {
 	ArrayList<Integer> aiTrainLabels;
 	ArrayList<Integer> aiTestLabels;
 	
+	//	True positive and false negative curves for each neuron
+	ArrayList<double[][]>  apdTruePos;
+	ArrayList<double[][]>  apdFalseNeg;
+	
 	/*	Initializes a multiclass perceptron.
 	 * All the input vectors must have '1' as first value. The parameter size doesn't include this value.
 	 */
@@ -126,16 +130,30 @@ public class MultiClass {
 	
 	/*	Trains the model. */
 	public void trainModel(){
-		for(int i = 0; i < iMaxIterations && epoch() > dEpsilon; i++);
+		apdTruePos.clear();
+		apdFalseNeg.clear();
+		
+		
+		//	TODO : Init des droites apdTruePos et apdFalseNeg
+		
+		
+		int i = 1;
+		for(; i <= iMaxIterations && epoch(i) > dEpsilon; i++);
+		
+		//	TODO : Refresh du display
+		
 		return;
 	}
 	
 	/*	Executes an epoch. */
-	public double epoch(){
+	public double epoch(int iItNumber){
 		double dErr = 0.;
 		double dRate = dLearningRate;
 				
 		for(int i = 0; i < avdTrainData.size(); i++){
+			int iLabel = 0;
+			double dMaxResp = Double.NEGATIVE_INFINITY;
+			
 			for(int j = 0; j < iClassAmt; j++){
 				//	Par rapport au cours :
 				//	dGk_ = ~Gk
@@ -143,10 +161,11 @@ public class MultiClass {
 				double dGk = Math.tanh(synapticResponse(avdTrainData.get(i), j));
 				double dGk_ = (aiTrainLabels.get(i) == j ? 1. : -1.);
 				
-				double dErrD = Math.pow((dGk - dGk_), 2) / 2.;
 				
-				dErr += dErrD;
+				//	Error update
+				dErr += Math.pow((dGk - dGk_), 2) / 2.;
 				
+				//	Model update
 				double vdParam[] = fmatW[j];
 				double vdUpdate[] = fmatW[j];
 				VectUtils.multVect(vdUpdate, - dRate * (dGk - dGk_));
@@ -154,8 +173,28 @@ public class MultiClass {
 				
 				fmatW[j] = vdParam;
 				
+				//	Learning rate update
 				dRate *= dLRMultiplier;
+				
+				//	Getting label
+				if(dMaxResp < dGk){
+					dMaxResp = dGk;
+					iLabel = j;
+				}
 			}
+			
+			//	TODO : Curve update
+			
+			if(iLabel == aiTrainLabels.get(i)){
+				apdTruePos.get(iLabel)[iItNumber][0] = iItNumber;
+				apdTruePos.get(iLabel)[iItNumber][1]++;
+			}
+			else{
+				apdFalseNeg.get(aiTrainLabels.get(i))[iItNumber][0] = iItNumber;
+				apdFalseNeg.get(aiTrainLabels.get(i))[iItNumber][1]++;
+			}
+			
+			//	----
 		}
 		
 		return dErr;
