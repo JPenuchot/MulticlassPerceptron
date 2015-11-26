@@ -46,7 +46,7 @@ public class MultiClass {
 	/*	Initializes a multiclass perceptron.
 	 * All the input vectors must have '1' as first value. The parameter size doesn't include this value.
 	 */
-	MultiClass(int ClassAmt, int ParamSize){
+	public MultiClass(int ClassAmt, int ParamSize){
 		iClassAmt = ClassAmt;
 		iParamSize = ParamSize;
 		

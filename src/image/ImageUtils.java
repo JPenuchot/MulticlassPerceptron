@@ -17,7 +17,7 @@ public class ImageUtils {
 		return x;
 	}
 	
-	public static double[] image2VecteurBinaire(int[][] image){
+	public static double[] img2BinVect(int[][] image){
 		return img2BinVect(image, dDefaultThreshold);
 	}
 	
