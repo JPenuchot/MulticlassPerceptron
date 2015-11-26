@@ -17,12 +17,20 @@ public class VectUtils {
 		return dRes;
 	}
 
-	public static void main(String args[]){	System.out.println("With love from Orsay.");	}
-
 	/*	Multiplies A per Fact. */
 	public static void multVect(double adA[], double dFact){
 		for(int i = 0; i < adA.length; i++)
 			adA[i] *= dFact;
 	}
 	
+	public static void main(String args[]){ System.out.println("With love from Orsay.");	}
+	
+	/*	Displays vA. */
+	public static void displayVect(double vA[]){
+		System.out.print("(");
+		for(int i = 0; i < vA.length - 1; i++){
+			System.out.print(vA[i] + "; ");
+		}
+		System.out.println(vA[vA.length - 1] + ")");
+	}	
 }

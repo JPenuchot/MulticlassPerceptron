@@ -13,6 +13,10 @@ import java.util.*;
 import java.lang.Math;
 import perceptron.VectUtils;
 
+import javax.swing.JFrame;
+import org.math.plot.*;
+import java.awt.Color;
+
 public class MultiClass {	
 	//	Amount of classes
 	private int iClassAmt;
@@ -21,27 +25,27 @@ public class MultiClass {
 	//	Learning rate
 	public double dLearningRate = 1.;
 	//	Learning rate multiplier
-	public double dLRMultiplier = .8;
+	public double dLRMultiplier = 1.;
 	
 	//	Maximum amount of iterations.
-	int iMaxIterations = 100;
+	int iMaxIterations = 5000;
 	//	Maximum tolerated error rate before iMaxIterations iterations were executed.
-	double dEpsilon = .1;
+	double dEpsilon = .001;
 	
 	//	Neurons' parameters
 	double fmatW[][];
 	
 	//	Train/Test data ArrayLists
-	ArrayList<double[]> avdTrainData;
-	ArrayList<double[]> avdTestData;
+	ArrayList<double[]> avdTrainData = new ArrayList<double[]>();
+	ArrayList<double[]> avdTestData = new ArrayList<double[]>();
 	
 	//	Train/Test labels ArrayList
-	ArrayList<Integer> aiTrainLabels;
-	ArrayList<Integer> aiTestLabels;
+	ArrayList<Integer> aiTrainLabels = new ArrayList<Integer>();
+	ArrayList<Integer> aiTestLabels = new ArrayList<Integer>();
 	
 	//	True positive and false negative curves for each neuron
-	ArrayList<double[][]>  apdTruePos;
-	ArrayList<double[][]>  apdFalseNeg;
+	ArrayList<double[][]>  apdTruePos = new ArrayList<double[][]>();
+	ArrayList<double[][]>  apdFalseNeg = new ArrayList<double[][]>();
 	
 	/*	Initializes a multiclass perceptron.
 	 * All the input vectors must have '1' as first value. The parameter size doesn't include this value.
@@ -136,10 +140,11 @@ public class MultiClass {
 		//	Initializing apdTruePos and apdFalseNeg
 		int i = 0;
 		for (; i < iClassAmt; i++){
-			apdTruePos.add(new double[iMaxIterations][2]);
-			apdFalseNeg.add(new double[iMaxIterations][2]);
+			apdTruePos.add(new double[iMaxIterations + 1][2]);
+			apdFalseNeg.add(new double[iMaxIterations + 1][2]);
 		}
 		
+		i = 0;
 		for(; i <= iMaxIterations && epoch(i) > dEpsilon; i++);
 		
 		//	Create display for true positives
@@ -176,36 +181,37 @@ public class MultiClass {
 			int iLabel = 0;
 			double dMaxResp = Double.NEGATIVE_INFINITY;
 			
-			for(int j = 0; j < iClassAmt; j++){
+			for(int iCurrentClass = 0; iCurrentClass < iClassAmt; iCurrentClass++){
 				//	Par rapport au cours :
 				//	dGk_ = ~Gk
 				//	dGk = Gk
-				double dGk = Math.tanh(synapticResponse(avdTrainData.get(i), j));
-				double dGk_ = (aiTrainLabels.get(i) == j ? 1. : -1.);
-				
+				double dGk = Math.tanh(synapticResponse(avdTrainData.get(i), iCurrentClass));
+				double dGk_ = (aiTrainLabels.get(i) == iCurrentClass ? 1. : -1.);
 				
 				//	Error update
-				dErr += Math.pow((dGk - dGk_), 2) / 2.;
+				dErr += Math.pow((dGk - dGk_), 2.) / 2.;
 				
 				//	Model update
-				double vdParam[] = fmatW[j];
-				double vdUpdate[] = fmatW[j];
+				double vdParam[] = fmatW[iCurrentClass].clone();
+				double vdUpdate[] = avdTrainData.get(i).clone();
 				VectUtils.multVect(vdUpdate, - dRate * (dGk - dGk_));
 				VectUtils.addVect(vdParam, vdUpdate);
 				
-				fmatW[j] = vdParam;
-				
+				fmatW[iCurrentClass] = vdParam;
+								
 				//	Learning rate update
 				dRate *= dLRMultiplier;
 				
 				//	Getting label
 				if(dMaxResp < dGk){
 					dMaxResp = dGk;
-					iLabel = j;
+					iLabel = iCurrentClass;
 				}
 			}
 			
 			//	TODO : Curve update
+			
+			//System.out.println("Result : " + iLabel + "; Actual label : " + aiTrainLabels.get(i));
 			
 			if(iLabel == aiTrainLabels.get(i)){
 				apdTruePos.get(iLabel)[iItNumber][0] = iItNumber;
@@ -218,7 +224,7 @@ public class MultiClass {
 			
 			//	----
 		}
-		
+		System.out.println("It. " + iItNumber + "; Error : " + dErr);
 		return dErr;
 	}
 	

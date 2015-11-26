@@ -17,7 +17,8 @@ public class Image {
 		MultiClass mcPerceptron = new MultiClass(10, ImageUtils.img2BinVect(mrDB.getImage(1)).length);
 		
 		for(int i = 1; i <= iMaxIdx; i++){
-			mcPerceptron.addTrainData(ImageUtils.img2BinVect(mrDB.getImage(i)));
+			mcPerceptron.addTrainData(ImageUtils.img2BinVect(mrDB.getImage(i), 10.));
+			mcPerceptron.addTrainLabel(mrDB.getLabel(i));
 		}
 		
 		//	Moulinette
