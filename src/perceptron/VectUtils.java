@@ -14,9 +14,10 @@ public class VectUtils {
 		for(int i = 0; i < adA.length; i++){
 			dRes += adA[i] * adB[i];
 		}
+		
 		return dRes;
 	}
-
+	
 	/*	Multiplies A per Fact. */
 	public static void multVect(double adA[], double dFact){
 		for(int i = 0; i < adA.length; i++)

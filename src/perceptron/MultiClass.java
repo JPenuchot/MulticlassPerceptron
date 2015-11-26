@@ -1,8 +1,8 @@
 /*	
  * Made by :
  * 
- * 		- ThÃ©ophile Walter
- * 		- Jules PÃ©nuchot
+ * 		- Théophile Walter
+ * 		- Jules Pénuchot
  * 
  * Both from Paris-Sud University in Orsay, France
  */
