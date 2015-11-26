@@ -144,8 +144,25 @@ public class MultiClass {
 			apdFalseNeg.add(new double[iMaxIterations + 1][2]);
 		}
 		
+		//	Execute the epochs
 		i = 0;
 		for(; i <= iMaxIterations && epoch(i) > dEpsilon; i++);
+
+		//	Rezise arrays according to the number of epoch performed
+		//	This prevents the last point of the line to be linked to (0,0)
+		for (int c = 0; c < iClassAmt; c++) {
+			boolean bTruePosResized = false, bFalseNegResized = false;
+			for (int p = 0; p <= iMaxIterations; p++) {
+				if (!bTruePosResized && apdTruePos.get(c)[p][0] == 0.0 && apdTruePos.get(c)[p][1] == 0.0 && p > 0) {
+					apdTruePos.set(c, Arrays.copyOf(apdTruePos.get(c), p));
+					bTruePosResized = true;
+				}
+				if (!bFalseNegResized && apdFalseNeg.get(c)[p][0] == 0.0 && apdFalseNeg.get(c)[p][1] == 0.0 && p > 0) {
+					apdFalseNeg.set(c, Arrays.copyOf(apdFalseNeg.get(c), p));
+					bFalseNegResized = true;
+				}
+			}
+		}
 		
 		//	Create display for true positives
 		Plot2DPanel plot2DTruePos = new Plot2DPanel();
@@ -162,11 +179,10 @@ public class MultiClass {
 		frameFalseNeg.setVisible(true);
 		
 		//  One curve per neuron
-		i = 0;
-		for(double[][] line : apdTruePos){
-			plot2DTruePos.addLinePlot( Integer.toString(i), new Color(0, 0, 0), line);
-			plot2DFalseNeg.addLinePlot( Integer.toString(i), new Color(0, 0, 0), line);
-			i++;
+		for (i = 0; i < iClassAmt; i++){
+			Color c = new Color((int) Math.floor(Math.random()*256), (int) Math.floor(Math.random()*256), (int) Math.floor(Math.random()*256));
+			plot2DTruePos.addLinePlot( Integer.toString(i), c, apdTruePos.get(i));
+			plot2DFalseNeg.addLinePlot( Integer.toString(i), c, apdFalseNeg.get(i));
 		}
 		
 		return;
