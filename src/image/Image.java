@@ -10,7 +10,7 @@ public class Image {
 		String sPath = "./", sImages = sPath + "train-images-idx3-ubyte", sLabels = sPath + "train-labels-idx1-ubyte";
 		MnistReader mrDB = new MnistReader(sLabels, sImages);
 		
-		int iMaxIdx = 1000;
+		int iMaxIdx = 10000;
 		
 		//	Création et init du perceptron multiclasse (10 classes, et on prend le vecteur résultant de la paramétrisation
 		//	de la première image comme référence concernant la taille des paramètres).

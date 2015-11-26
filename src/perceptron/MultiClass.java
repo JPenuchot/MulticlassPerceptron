@@ -25,10 +25,10 @@ public class MultiClass {
 	//	Learning rate
 	public double dLearningRate = 1.;
 	//	Learning rate multiplier
-	public double dLRMultiplier = 1.;
+	public double dLRMultiplier = .8;
 	
 	//	Maximum amount of iterations.
-	int iMaxIterations = 5000;
+	int iMaxIterations = 200;
 	//	Maximum tolerated error rate before iMaxIterations iterations were executed.
 	double dEpsilon = .001;
 	
@@ -150,17 +150,10 @@ public class MultiClass {
 
 		//	Rezise arrays according to the number of epoch performed
 		//	This prevents the last point of the line to be linked to (0,0)
-		for (int c = 0; c < iClassAmt; c++) {
-			boolean bTruePosResized = false, bFalseNegResized = false;
-			for (int p = 0; p <= iMaxIterations; p++) {
-				if (!bTruePosResized && apdTruePos.get(c)[p][0] == 0.0 && apdTruePos.get(c)[p][1] == 0.0 && p > 0) {
-					apdTruePos.set(c, Arrays.copyOf(apdTruePos.get(c), p));
-					bTruePosResized = true;
-				}
-				if (!bFalseNegResized && apdFalseNeg.get(c)[p][0] == 0.0 && apdFalseNeg.get(c)[p][1] == 0.0 && p > 0) {
-					apdFalseNeg.set(c, Arrays.copyOf(apdFalseNeg.get(c), p));
-					bFalseNegResized = true;
-				}
+		if (i - 1 != iMaxIterations) {
+			for (int c = 0; c < iClassAmt; c++) {
+				apdTruePos.set(c, Arrays.copyOf(apdTruePos.get(c), i));
+				apdFalseNeg.set(c, Arrays.copyOf(apdFalseNeg.get(c), i));
 			}
 		}
 		
@@ -214,9 +207,6 @@ public class MultiClass {
 				VectUtils.addVect(vdParam, vdUpdate);
 				
 				fmatW[iCurrentClass] = vdParam;
-								
-				//	Learning rate update
-				dRate *= dLRMultiplier;
 				
 				//	Getting label
 				if(dMaxResp < dGk){
@@ -232,15 +222,21 @@ public class MultiClass {
 			if(iLabel == aiTrainLabels.get(i)){
 				apdTruePos.get(iLabel)[iItNumber][0] = iItNumber;
 				apdTruePos.get(iLabel)[iItNumber][1]++;
+				apdFalseNeg.get(aiTrainLabels.get(i))[iItNumber][0] = iItNumber;
 			}
 			else{
 				apdFalseNeg.get(aiTrainLabels.get(i))[iItNumber][0] = iItNumber;
 				apdFalseNeg.get(aiTrainLabels.get(i))[iItNumber][1]++;
+				apdTruePos.get(iLabel)[iItNumber][0] = iItNumber;
 			}
 			
 			//	----
 		}
 		System.out.println("It. " + iItNumber + "; Error : " + dErr);
+		
+		//		Learning rate update
+		dRate *= dLRMultiplier;
+		
 		return dErr;
 	}
 	
