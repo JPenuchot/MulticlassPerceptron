@@ -25,10 +25,10 @@ public class MultiClass {
 	//	Learning rate
 	public double dLearningRate = 1.;
 	//	Learning rate multiplier
-	public double dLRMultiplier = 1.;
+	public double dLRMultiplier = .8;
 	
 	//	Maximum amount of iterations.
-	int iMaxIterations = 5000;
+	int iMaxIterations = 200;
 	//	Maximum tolerated error rate before iMaxIterations iterations were executed.
 	double dEpsilon = .001;
 	
@@ -214,9 +214,6 @@ public class MultiClass {
 				VectUtils.addVect(vdParam, vdUpdate);
 				
 				fmatW[iCurrentClass] = vdParam;
-								
-				//	Learning rate update
-				dRate *= dLRMultiplier;
 				
 				//	Getting label
 				if(dMaxResp < dGk){
@@ -241,6 +238,10 @@ public class MultiClass {
 			//	----
 		}
 		System.out.println("It. " + iItNumber + "; Error : " + dErr);
+		
+		//		Learning rate update
+		dRate *= dLRMultiplier;
+		
 		return dErr;
 	}
 	
