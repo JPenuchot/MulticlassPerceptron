@@ -1,8 +1,8 @@
 /*	
  * Made by :
  * 
- * 		- Théophile Walter
- * 		- Jules Pénuchot
+ * 		- ThÃ©ophile Walter
+ * 		- Jules PÃ©nuchot
  * 
  * Both from Paris-Sud University in Orsay, France
  */
@@ -133,14 +133,36 @@ public class MultiClass {
 		apdTruePos.clear();
 		apdFalseNeg.clear();
 		
+		//	Initializing apdTruePos and apdFalseNeg
+		int i = 0;
+		for (; i < iClassAmt; i++){
+			apdTruePos.add(new double[iMaxIterations][2]);
+			apdFalseNeg.add(new double[iMaxIterations][2]);
+		}
 		
-		//	TODO : Init des droites apdTruePos et apdFalseNeg
-		
-		
-		int i = 1;
 		for(; i <= iMaxIterations && epoch(i) > dEpsilon; i++);
 		
-		//	TODO : Refresh du display
+		//	Create display for true positives
+		Plot2DPanel plot2DTruePos = new Plot2DPanel();
+		JFrame frameTruePos = new JFrame("True Positives");
+		frameTruePos.setSize(600, 600);
+		frameTruePos.setContentPane(plot2DTruePos);
+		frameTruePos.setVisible(true);
+		
+		// Create display for false negatives
+		Plot2DPanel plot2DFalseNeg = new Plot2DPanel();
+		JFrame frameFalseNeg = new JFrame("False Negatives");
+		frameFalseNeg.setSize(600, 600);
+		frameFalseNeg.setContentPane(plot2DFalseNeg);
+		frameFalseNeg.setVisible(true);
+		
+		//  One curve per neuron
+		i = 0;
+		for(double[][] line : apdTruePos){
+			plot2DTruePos.addLinePlot( Integer.toString(i), new Color(0, 0, 0), line);
+			plot2DFalseNeg.addLinePlot( Integer.toString(i), new Color(0, 0, 0), line);
+			i++;
+		}
 		
 		return;
 	}
