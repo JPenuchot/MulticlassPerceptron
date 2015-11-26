@@ -112,14 +112,14 @@ public class MultiClass {
 	}
 	
 	/*	Adds an array of labels to the training dataset. */
-	public void addTrainLabel(ArrayList<Integer> aiLabels){
+	public void addTrainLabels(ArrayList<Integer> aiLabels){
 		for(Integer iLabel: aiLabels){
 			addTrainLabel(iLabel);
 		}
 	}
 	
 	/*	Adds an array of labels to the test dataset. */
-	public void addTestLabel(ArrayList<Integer> aiLabels){
+	public void addTestLabels(ArrayList<Integer> aiLabels){
 		for(Integer iLabel: aiLabels){
 			addTestLabel(iLabel);
 		}
@@ -146,7 +146,7 @@ public class MultiClass {
 	}
 	
 	/*	Executes an epoch. */
-	public double epoch(int iItNumber){
+	double epoch(int iItNumber){
 		double dErr = 0.;
 		double dRate = dLearningRate;
 				

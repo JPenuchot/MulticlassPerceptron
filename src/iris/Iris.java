@@ -1,21 +1,21 @@
-package projects;
+package iris;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import csv.CsvFile;
 import perceptron.MultiClass;
 
 public class Iris {
-	public static void main(String args[]){
+	public static void main(String args[]) throws IOException{
 		System.out.println("Wait for it...");
 		
 		
 		//	Init de la DB
-		String path="./"; // contient le chemin d'accès
+		String path=""; // contient le chemin d'accès
 		String labelDB="iris.data";
-		CsvFile db = new CsvFile(path,labelDB);
 		
-		
+		CsvFile db = new CsvFile(path, labelDB);
 		 
 		//	Chargement des données dans un ArrayList
 		
