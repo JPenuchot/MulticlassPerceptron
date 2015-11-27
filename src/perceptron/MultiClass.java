@@ -177,7 +177,7 @@ public class MultiClass {
 		
 		//	Create display for test errors
 		Plot2DPanel plot2DTestError = new Plot2DPanel();
-		JFrame frameTestError = new JFrame("Train Errors");
+		JFrame frameTestError = new JFrame("Test Errors");
 		frameTestError.setSize(600, 600);
 		frameTestError.setContentPane(plot2DTestError);
 		frameTestError.setVisible(true);
@@ -198,7 +198,7 @@ public class MultiClass {
 		
 		//	Errors curves
 		plot2DTrainError.addLinePlot( "TrainErrorError", new Color(255, 0, 0), apdTrainError);
-		plot2DTestError.addLinePlot( "TestErrorError", new Color(255, 0, 0), apdTrainError);
+		plot2DTestError.addLinePlot( "TestErrorError", new Color(255, 0, 0), apdTestError);
 		
 		//  One curve per neuron
 		for (i = 0; i < iClassAmt; i++){
