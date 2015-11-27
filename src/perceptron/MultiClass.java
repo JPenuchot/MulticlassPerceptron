@@ -47,6 +47,10 @@ public class MultiClass {
 	ArrayList<double[][]>  apdTruePos = new ArrayList<double[][]>();
 	ArrayList<double[][]>  apdFalseNeg = new ArrayList<double[][]>();
 	
+	//	Error curves for training and testing datasets
+	double[][] apdTrainError;
+	double[][] apdTestError;
+	
 	/*	Initializes a multiclass perceptron.
 	 * All the input vectors must have '1' as first value. The parameter size doesn't include this value.
 	 */
@@ -144,7 +148,10 @@ public class MultiClass {
 			apdFalseNeg.add(new double[iMaxIterations + 1][2]);
 		}
 		
-		//	Execute the epochs
+		//	TODO : Init apdTestErrors & apdTrainErrors
+		
+		
+		//	Executes the epochs
 		i = 0;
 		for(; i <= iMaxIterations && epoch(i) > dEpsilon; i++);
 
@@ -156,6 +163,8 @@ public class MultiClass {
 				apdFalseNeg.set(c, Arrays.copyOf(apdFalseNeg.get(c), i));
 			}
 		}
+		
+		//	TODO : apdTestErrors and apdTrainErrors display
 		
 		//	Create display for true positives
 		Plot2DPanel plot2DTruePos = new Plot2DPanel();
@@ -186,7 +195,7 @@ public class MultiClass {
 		double dErr = 0.;
 		double dRate = dLearningRate;
 				
-		for(int i = 0; i < avdTrainData.size(); i++){
+		for(int iCurrentData = 0; iCurrentData < avdTrainData.size(); iCurrentData++){
 			int iLabel = 0;
 			double dMaxResp = Double.NEGATIVE_INFINITY;
 			
@@ -194,15 +203,15 @@ public class MultiClass {
 				//	Par rapport au cours :
 				//	dGk_ = ~Gk
 				//	dGk = Gk
-				double dGk = Math.tanh(synapticResponse(avdTrainData.get(i), iCurrentClass));
-				double dGk_ = (aiTrainLabels.get(i) == iCurrentClass ? 1. : -1.);
+				double dGk = Math.tanh(synapticResponse(avdTrainData.get(iCurrentData), iCurrentClass));
+				double dGk_ = (aiTrainLabels.get(iCurrentData) == iCurrentClass ? 1. : -1.);
 				
 				//	Error update
 				dErr += Math.pow((dGk - dGk_), 2.) / 2.;
 				
 				//	Model update
 				double vdParam[] = fmatW[iCurrentClass].clone();
-				double vdUpdate[] = avdTrainData.get(i).clone();
+				double vdUpdate[] = avdTrainData.get(iCurrentData).clone();
 				VectUtils.multVect(vdUpdate, - dRate * (dGk - dGk_));
 				VectUtils.addVect(vdParam, vdUpdate);
 				
@@ -214,20 +223,20 @@ public class MultiClass {
 					iLabel = iCurrentClass;
 				}
 			}
-			
-			//	TODO : Curve update
-			
+						
 			//System.out.println("Result : " + iLabel + "; Actual label : " + aiTrainLabels.get(i));
 			
-			if(iLabel == aiTrainLabels.get(i)){
+			if(iLabel == aiTrainLabels.get(iCurrentData)){
 				apdTruePos.get(iLabel)[iItNumber][0] = iItNumber;
 				apdTruePos.get(iLabel)[iItNumber][1]++;
-				apdFalseNeg.get(aiTrainLabels.get(i))[iItNumber][0] = iItNumber;
+				apdFalseNeg.get(aiTrainLabels.get(iCurrentData))[iItNumber][0] = iItNumber;
 			}
 			else{
-				apdFalseNeg.get(aiTrainLabels.get(i))[iItNumber][0] = iItNumber;
-				apdFalseNeg.get(aiTrainLabels.get(i))[iItNumber][1]++;
+				apdFalseNeg.get(aiTrainLabels.get(iCurrentData))[iItNumber][0] = iItNumber;
+				apdFalseNeg.get(aiTrainLabels.get(iCurrentData))[iItNumber][1]++;
 				apdTruePos.get(iLabel)[iItNumber][0] = iItNumber;
+				
+				//	TODO : General error curve update
 			}
 			
 			//	----
@@ -241,23 +250,37 @@ public class MultiClass {
 	}
 	
 	/*	Runs tests on the test dataset and returns the error rate. */
-	public double test(){
+	public double test(int iItNumber){
 		double dErr = 0.;
 		
-		for(int i = 0; i < avdTestData.size(); i++){
-			for(int j = 0; j < iClassAmt; j++){
+		for(int iCurrentData = 0; iCurrentData < avdTestData.size(); iCurrentData++){
+			int iLabel = 0;
+			double dMaxResp = Double.NEGATIVE_INFINITY;
+			
+			for(int iCurrentClass = 0; iCurrentClass < iClassAmt; iCurrentClass++){
 				//	Par rapport au cours :
 				//	dGk_ = ~Gk
 				//	dGk = Gk
-				double dGk = Math.tanh(synapticResponse(avdTestData.get(i), j));
-				double dGk_ = (aiTestLabels.get(i) == j ? 1. : -1.);
+				double dGk = Math.tanh(synapticResponse(avdTestData.get(iCurrentData), iCurrentClass));
+				double dGk_ = (aiTestLabels.get(iCurrentData) == iCurrentClass ? 1. : -1.);
 				
 				double dErrD = Math.pow((dGk - dGk_), 2) / 2.;
 				
 				dErr += dErrD;
+				
+				//	Getting label
+				if(dMaxResp < dGk){
+					dMaxResp = dGk;
+					iLabel = iCurrentClass;
+				}
 			}
+
+			if(iLabel != aiTestLabels.get(iCurrentData)){
+				//	TODO : Test dataset curve update
+			}
+			
 		}
-		
+				
 		return dErr;
 	}
 	
