@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="jmathplot.jar"/>
-	<classpathentry kind="lib" path="mnist-tools.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Théophile/git/MulticlassPerceptron/jmathplot.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Théophile/git/MulticlassPerceptron/mnist-tools.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
