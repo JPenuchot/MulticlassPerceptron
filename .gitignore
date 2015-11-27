@@ -13,8 +13,8 @@ hs_err_pid*
 /bin/
 
 #	Generated data
-/output/
 *.ppm
+*.dat
 
 #	User data
 /data/
