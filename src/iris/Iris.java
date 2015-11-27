@@ -15,10 +15,11 @@ public class Iris {
 		//	Init de la DB
 		String path="./data/"; // contient le chemin d'accès
 		String labelDB="iris.data";
-		
 		CsvFile db = new CsvFile(path, labelDB);
 				
 		MultiClass mcPerceptron = new MultiClass(3, 4);
+		
+		String sOutputPath = "./output/iris/";
 		 
 		//	Chargement des données dans un ArrayList
 		for(int i = 0; i < db.getNumData() - 1; i++){
