@@ -324,7 +324,6 @@ public class MultiClass {
 				dMax = dvSR[i];
 			}
 		}
-		
 		return iRes;
 	}
 	
@@ -333,7 +332,7 @@ public class MultiClass {
 		double res[] = new double[fmatW.length];
 		
 		for(int i = 0; i < fmatW.length; i++){
-			res[i] = synapticResponse(dvParam, i);
+			res[i] = Math.tanh(synapticResponse(dvParam, i));
 		}
 		
 		return res;
