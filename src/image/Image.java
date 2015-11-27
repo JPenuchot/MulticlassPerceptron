@@ -11,7 +11,7 @@ import image.ImageUtils;
 public class Image {
 	public static void main(String args[]) throws IOException{		
 		//	Création et init de la DB
-		String sPath = "./", sImages = sPath + "train-images-idx3-ubyte", sLabels = sPath + "train-labels-idx1-ubyte";
+		String sPath = "./data/", sImages = sPath + "train-images-idx3-ubyte", sLabels = sPath + "train-labels-idx1-ubyte";
 		MnistReader mrDB = new MnistReader(sLabels, sImages);
 		
 		int iTrainDataAmt = 1000;
