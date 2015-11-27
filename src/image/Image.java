@@ -10,19 +10,19 @@ public class Image {
 		String sPath = "./", sImages = sPath + "train-images-idx3-ubyte", sLabels = sPath + "train-labels-idx1-ubyte";
 		MnistReader mrDB = new MnistReader(sLabels, sImages);
 		
-		int iTrainMaxIdx = 10000;
-		int iTestMaxIdx = 20000;
+		int iTrainDataAmt = 1000;
+		int iTestDataAmt = 1000;
 		
 		//	Création et init du perceptron multiclasse (10 classes, et on prend le vecteur résultant de la paramétrisation
 		//	de la première image comme référence concernant la taille des paramètres).
 		MultiClass mcPerceptron = new MultiClass(10, ImageUtils.img2BinVect(mrDB.getImage(1)).length);
 		
-		for(int i = 1; i <= iTrainMaxIdx; i++){
+		for(int i = 1; i <= iTrainDataAmt; i++){
 			mcPerceptron.addTrainData(ImageUtils.img2BinVect(mrDB.getImage(i), 10.));
 			mcPerceptron.addTrainLabel(mrDB.getLabel(i));
 		}
 		
-		for(int i = iTrainMaxIdx; i <= iTestMaxIdx; i++){
+		for(int i = iTrainDataAmt; i <= iTrainDataAmt + iTestDataAmt; i++){
 			mcPerceptron.addTestData(ImageUtils.img2BinVect(mrDB.getImage(i), 10.));
 			mcPerceptron.addTestLabel(mrDB.getLabel(i));
 		}

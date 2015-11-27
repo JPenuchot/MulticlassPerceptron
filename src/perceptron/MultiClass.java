@@ -133,6 +133,12 @@ public class MultiClass {
 		}
 	}
 	
+	/*	Returns the amount of classes. */	
+	public int getClassAmount(){	return iClassAmt;	}
+	
+	/*	Returns the generated parameter for a given class. */
+	public double[] getClassParam(int iClass){	return fmatW[iClass];	}
+	
 	/*	Returns the synaptic response for a given neuron/class. */
 	public double synapticResponse(double[] dvParam, int iNeuronNumber){	return VectUtils.dotProduct(dvParam, fmatW[iNeuronNumber]);	}
 	
