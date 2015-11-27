@@ -23,9 +23,9 @@ public class MultiClass {
 	//	Size of a parameter
 	private int iParamSize;
 	//	Learning rate
-	public double dLearningRate;
+	private double dLearningRate;
 	//	Learning rate multiplier
-	public double dLRMultiplier = .8;
+	private double dLRMultiplier;
 		
 	//	Neurons' parameters
 	private double fmatW[][];
@@ -138,10 +138,11 @@ public class MultiClass {
 	 *	==================	*/
 	
 	/*	Trains the model. */
-	public void trainModel(int iMaxIterations, double dEpsilon, double dLR) throws IOException{apdTruePos.clear();
+	public void trainModel(int iMaxIterations, double dEpsilon, double dLR, double dLRMul) throws IOException{apdTruePos.clear();
 		apdFalseNeg.clear();
 		
 		dLearningRate = dLR;
+		dLRMultiplier = dLRMul;
 		
 		//	Initializing apdTruePos and apdFalseNeg
 		int i = 0;

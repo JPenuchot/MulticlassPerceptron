@@ -41,7 +41,7 @@ public class Image {
 		}
 		
 		//	Moulinette
-		mcPerceptron.trainModel(2000, 0., .05);
+		mcPerceptron.trainModel(2000, 0., .05, .8);
 		
 		int iImgWidth = mrDB.getImage(1).length, iImgHeight = mrDB.getImage(1)[0].length;
 		

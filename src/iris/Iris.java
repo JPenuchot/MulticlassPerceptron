@@ -36,7 +36,7 @@ public class Iris {
 			mcPerceptron.addTestLabel(db.getLabelInt(i).intValue());
 		}
 		
-		mcPerceptron.trainModel(2000, .001, .0005);
+		mcPerceptron.trainModel(2000, 5., .0005, 1.);
 		
 		System.out.println("Test error rate : " + mcPerceptron.test(0));
 						
