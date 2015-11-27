@@ -148,23 +148,39 @@ public class MultiClass {
 			apdFalseNeg.add(new double[iMaxIterations + 1][2]);
 		}
 		
-		//	TODO : Init apdTestErrors & apdTrainErrors
-		
+		//	Initializing apdTrainError and apdTestError
+		apdTrainError = new double[iMaxIterations + 1][2];
+		apdTestError = new double[iMaxIterations + 1][2];
 		
 		//	Executes the epochs
 		i = 0;
-		for(; i <= iMaxIterations && epoch(i) > dEpsilon; i++);
+		for(; i <= iMaxIterations && epoch(i) > dEpsilon; i++)
+			test(i);
 
 		//	Rezise arrays according to the number of epoch performed
 		//	This prevents the last point of the line to be linked to (0,0)
 		if (i - 1 != iMaxIterations) {
+			apdTrainError = Arrays.copyOf(apdTrainError, i);
+			apdTestError = Arrays.copyOf(apdTestError, i);
 			for (int c = 0; c < iClassAmt; c++) {
 				apdTruePos.set(c, Arrays.copyOf(apdTruePos.get(c), i));
 				apdFalseNeg.set(c, Arrays.copyOf(apdFalseNeg.get(c), i));
 			}
 		}
 		
-		//	TODO : apdTestErrors and apdTrainErrors display
+		//	Create display for train errors
+		Plot2DPanel plot2DTrainError = new Plot2DPanel();
+		JFrame frameTrainError = new JFrame("Train Errors");
+		frameTrainError.setSize(600, 600);
+		frameTrainError.setContentPane(plot2DTrainError);
+		frameTrainError.setVisible(true);
+		
+		//	Create display for test errors
+		Plot2DPanel plot2DTestError = new Plot2DPanel();
+		JFrame frameTestError = new JFrame("Train Errors");
+		frameTestError.setSize(600, 600);
+		frameTestError.setContentPane(plot2DTestError);
+		frameTestError.setVisible(true);
 		
 		//	Create display for true positives
 		Plot2DPanel plot2DTruePos = new Plot2DPanel();
@@ -179,6 +195,10 @@ public class MultiClass {
 		frameFalseNeg.setSize(600, 600);
 		frameFalseNeg.setContentPane(plot2DFalseNeg);
 		frameFalseNeg.setVisible(true);
+		
+		//	Errors curves
+		plot2DTrainError.addLinePlot( "TrainErrorError", new Color(255, 0, 0), apdTrainError);
+		plot2DTestError.addLinePlot( "TestErrorError", new Color(255, 0, 0), apdTrainError);
 		
 		//  One curve per neuron
 		for (i = 0; i < iClassAmt; i++){
@@ -230,13 +250,16 @@ public class MultiClass {
 				apdTruePos.get(iLabel)[iItNumber][0] = iItNumber;
 				apdTruePos.get(iLabel)[iItNumber][1]++;
 				apdFalseNeg.get(aiTrainLabels.get(iCurrentData))[iItNumber][0] = iItNumber;
+
+				apdTrainError[iItNumber][0] = iItNumber;
 			}
 			else{
 				apdFalseNeg.get(aiTrainLabels.get(iCurrentData))[iItNumber][0] = iItNumber;
 				apdFalseNeg.get(aiTrainLabels.get(iCurrentData))[iItNumber][1]++;
 				apdTruePos.get(iLabel)[iItNumber][0] = iItNumber;
 				
-				//	TODO : General error curve update
+				apdTrainError[iItNumber][0] = iItNumber;
+				apdTrainError[iItNumber][1]++;
 			}
 			
 			//	----
@@ -276,7 +299,8 @@ public class MultiClass {
 			}
 
 			if(iLabel != aiTestLabels.get(iCurrentData)){
-				//	TODO : Test dataset curve update
+				apdTestError[iItNumber][0] = iItNumber;
+				apdTestError[iItNumber][1]++;
 			}
 			
 		}
