@@ -1,11 +1,15 @@
 package image;
 
+import mnisttools.MnistManager;
 import mnisttools.MnistReader;
 import perceptron.MultiClass;
+
+import java.io.IOException;
+
 import image.ImageUtils;
 
 public class Image {
-	public static void main(String args[]){		
+	public static void main(String args[]) throws IOException{		
 		//	Création et init de la DB
 		String sPath = "./", sImages = sPath + "train-images-idx3-ubyte", sLabels = sPath + "train-labels-idx1-ubyte";
 		MnistReader mrDB = new MnistReader(sLabels, sImages);
@@ -29,5 +33,11 @@ public class Image {
 		
 		//	Moulinette
 		mcPerceptron.trainModel();
+		
+		int iImgWidth = mrDB.getImage(1).length, iImgHeight = mrDB.getImage(1)[0].length;
+		
+		for(int i = 0; i < mcPerceptron.getClassAmount(); i++){
+			MnistManager.writeImageToPpm(ImageUtils.vect2Img(mcPerceptron.getClassParam(i), iImgWidth, iImgHeight), "Synapse_" + i + ".ppm");
+		}
 	}
 }

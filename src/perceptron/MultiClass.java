@@ -110,14 +110,10 @@ public class MultiClass {
 	}
 	
 	/*	Adds a label to the aiTrainLabels ArrayList. */
-	public void addTrainLabel(Integer iLabel){
-		aiTrainLabels.add(iLabel);
-	}
+	public void addTrainLabel(Integer iLabel){	aiTrainLabels.add(iLabel);	}
 	
 	/*	Adds a label to the aiTestLabels ArrayList. */
-	public void addTestLabel(Integer iLabel){
-		aiTestLabels.add(iLabel);
-	}
+	public void addTestLabel(Integer iLabel){	aiTestLabels.add(iLabel);	}
 	
 	/*	Adds an array of labels to the training dataset. */
 	public void addTrainLabels(ArrayList<Integer> aiLabels){
@@ -137,7 +133,7 @@ public class MultiClass {
 	public int getClassAmount(){	return iClassAmt;	}
 	
 	/*	Returns the generated parameter for a given class. */
-	public double[] getClassParam(int iClass){	return fmatW[iClass];	}
+	public double[] getClassParam(int iClass){	return fmatW[iClass].clone();	}
 	
 	/*	Returns the synaptic response for a given neuron/class. */
 	public double synapticResponse(double[] dvParam, int iNeuronNumber){	return VectUtils.dotProduct(dvParam, fmatW[iNeuronNumber]);	}
@@ -150,22 +146,22 @@ public class MultiClass {
 		//	Initializing apdTruePos and apdFalseNeg
 		int i = 0;
 		for (; i < iClassAmt; i++){
-			apdTruePos.add(new double[iMaxIterations + 1][2]);
-			apdFalseNeg.add(new double[iMaxIterations + 1][2]);
+			apdTruePos.add(new double[iMaxIterations][2]);
+			apdFalseNeg.add(new double[iMaxIterations][2]);
 		}
 		
 		//	Initializing apdTrainError and apdTestError
-		apdTrainError = new double[iMaxIterations + 1][2];
-		apdTestError = new double[iMaxIterations + 1][2];
+		apdTrainError = new double[iMaxIterations][2];
+		apdTestError = new double[iMaxIterations][2];
 		
 		//	Executes the epochs
 		i = 0;
-		for(; i <= iMaxIterations && epoch(i) > dEpsilon; i++)
+		for(; i < iMaxIterations && epoch(i) > dEpsilon; i++)
 			test(i);
 
 		//	Rezise arrays according to the number of epoch performed
 		//	This prevents the last point of the line to be linked to (0,0)
-		if (i - 1 != iMaxIterations) {
+		if (i + 1 < iMaxIterations) {
 			apdTrainError = Arrays.copyOf(apdTrainError, i);
 			apdTestError = Arrays.copyOf(apdTestError, i);
 			for (int c = 0; c < iClassAmt; c++) {
@@ -250,8 +246,6 @@ public class MultiClass {
 				}
 			}
 						
-			//System.out.println("Result : " + iLabel + "; Actual label : " + aiTrainLabels.get(i));
-			
 			if(iLabel == aiTrainLabels.get(iCurrentData)){
 				apdTruePos.get(iLabel)[iItNumber][0] = iItNumber;
 				apdTruePos.get(iLabel)[iItNumber][1]++;
@@ -267,8 +261,6 @@ public class MultiClass {
 				apdTrainError[iItNumber][0] = iItNumber;
 				apdTrainError[iItNumber][1]++;
 			}
-			
-			//	----
 		}
 		System.out.println("It. " + iItNumber + "; Error : " + dErr);
 		
