@@ -223,7 +223,7 @@ public class MultiClass {
 				double dGk_ = (aiTrainLabels.get(iCurrentData) == iCurrentClass ? 1. : -1.);
 				
 				//	Error update
-				dErr += Math.pow((dGk - dGk_), 2.) / 2.;
+				//dErr += Math.pow((dGk - dGk_), 2.) / 2.;
 				
 				//	Model update
 				double vdParam[] = fmatW[iCurrentClass].clone();
@@ -239,7 +239,7 @@ public class MultiClass {
 					iLabel = iCurrentClass;
 				}
 			}
-						
+			
 			if(iLabel == aiTrainLabels.get(iCurrentData)){
 				apdTruePos.get(iLabel)[iItNumber][0] = iItNumber;
 				apdTruePos.get(iLabel)[iItNumber][1]++;
@@ -248,6 +248,7 @@ public class MultiClass {
 				apdTrainError[iItNumber][0] = iItNumber;
 			}
 			else{
+				dErr++;
 				apdFalseNeg.get(aiTrainLabels.get(iCurrentData))[iItNumber][0] = iItNumber;
 				apdFalseNeg.get(aiTrainLabels.get(iCurrentData))[iItNumber][1]++;
 				apdTruePos.get(iLabel)[iItNumber][0] = iItNumber;
@@ -258,7 +259,7 @@ public class MultiClass {
 		}
 		System.out.println("It. " + iItNumber + "; Error : " + dErr);
 		
-		//		Learning rate update
+		//	Learning rate update
 		dRate *= dLRMultiplier;
 		
 		return dErr;
@@ -301,11 +302,22 @@ public class MultiClass {
 	}
 	
 	/*	Classifies given data. */
-	public int classify(double[] dvParam) throws IOException{
+	public int classify(double[] dvInputParam) throws IOException{
+		if(dvInputParam.length != iParamSize)
+			return -1;
+		
+		double dvParam[] = new double[dvInputParam.length + 1];
+		
+		dvParam[0] = 1;
+		
+		for(int i = 0; i < dvInputParam.length; i++)
+			dvParam[i+1] = dvInputParam[i];
+		
 		double dvSR[] = synapticResponses(dvParam);
 		
-		int iRes = 0;
+		int iRes = -1;
 		double dMax = Double.NEGATIVE_INFINITY;
+		
 		for(int i = 0; i < dvSR.length; i++){
 			if(dvSR[i] > dMax){
 				iRes = i;
