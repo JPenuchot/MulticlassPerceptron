@@ -16,6 +16,7 @@ import perceptron.VectUtils;
 import javax.swing.JFrame;
 import org.math.plot.*;
 import java.awt.Color;
+import java.io.IOException;
 
 public class MultiClass {	
 	//	Amount of classes
@@ -26,12 +27,7 @@ public class MultiClass {
 	public double dLearningRate = 1.;
 	//	Learning rate multiplier
 	public double dLRMultiplier = .8;
-	
-	//	Maximum amount of iterations.
-	int iMaxIterations = 200;
-	//	Maximum tolerated error rate before iMaxIterations iterations were executed.
-	double dEpsilon = .001;
-	
+		
 	//	Neurons' parameters
 	double fmatW[][];
 	
@@ -54,7 +50,7 @@ public class MultiClass {
 	/*	Initializes a multiclass perceptron.
 	 * All the input vectors must have '1' as first value. The parameter size doesn't include this value.
 	 */
-	public MultiClass(int ClassAmt, int ParamSize){
+	public MultiClass(int ClassAmt, int ParamSize) throws IOException{
 		iClassAmt = ClassAmt;
 		iParamSize = ParamSize;
 		
@@ -64,7 +60,7 @@ public class MultiClass {
 	/*	Adds a data vector to the avdTrainData ArrayList.
 	 * The data vector's size must be equal to iParamSize.
 	 */
-	public void addTrainData(double vdData[]){
+	public void addTrainData(double vdData[]) throws IOException{
 		if(vdData.length != iParamSize)
 			return;
 		
@@ -72,14 +68,13 @@ public class MultiClass {
 		vdRes[0] = 1;
 		for(int i = 0; i < vdData.length; i++)
 			vdRes[i+1] = vdData[i];
-		
 		avdTrainData.add(vdRes);
 	}
 	
 	/*	Adds a data vector to the avdTestData ArrayList.
 	 * The data vector's size must be equal to iParamSize.
 	 */
-	public void addTestData(double vdData[]){
+	public void addTestData(double vdData[]) throws IOException{
 		if(vdData.length != iParamSize)
 			return;
 		
@@ -94,7 +89,7 @@ public class MultiClass {
 	/*	Adds an array of data to the training dataset.
 	 * Data vectors' sizes must be equal to iParamSize.
 	 */
-	public void addTrainData(ArrayList<double[]> avdData){
+	public void addTrainData(ArrayList<double[]> avdData) throws IOException{
 		for(double[] vdData: avdData){
 			addTrainData(vdData);
 		}
@@ -103,44 +98,43 @@ public class MultiClass {
 	/*	Adds an array of data to the test dataset.
 	 * Data vectors' sizes must be equal to iParamSize.
 	 */
-	public void addTestData(ArrayList<double[]> avdData){
+	public void addTestData(ArrayList<double[]> avdData) throws IOException{
 		for(double[] vdData: avdData){
 			addTestData(vdData);
 		}
 	}
 	
 	/*	Adds a label to the aiTrainLabels ArrayList. */
-	public void addTrainLabel(Integer iLabel){	aiTrainLabels.add(iLabel);	}
+	public void addTrainLabel(Integer iLabel) throws IOException{	aiTrainLabels.add(iLabel);	}
 	
 	/*	Adds a label to the aiTestLabels ArrayList. */
-	public void addTestLabel(Integer iLabel){	aiTestLabels.add(iLabel);	}
+	public void addTestLabel(Integer iLabel) throws IOException{	aiTestLabels.add(iLabel);	}
 	
 	/*	Adds an array of labels to the training dataset. */
-	public void addTrainLabels(ArrayList<Integer> aiLabels){
+	public void addTrainLabels(ArrayList<Integer> aiLabels) throws IOException{
 		for(Integer iLabel: aiLabels){
 			addTrainLabel(iLabel);
 		}
 	}
 	
 	/*	Adds an array of labels to the test dataset. */
-	public void addTestLabels(ArrayList<Integer> aiLabels){
+	public void addTestLabels(ArrayList<Integer> aiLabels) throws IOException{
 		for(Integer iLabel: aiLabels){
 			addTestLabel(iLabel);
 		}
 	}
 	
 	/*	Returns the amount of classes. */	
-	public int getClassAmount(){	return iClassAmt;	}
+	public int getClassAmount() throws IOException{	return iClassAmt;	}
 	
 	/*	Returns the generated parameter for a given class. */
-	public double[] getClassParam(int iClass){	return fmatW[iClass].clone();	}
+	public double[] getClassParam(int iClass) throws IOException{	return fmatW[iClass].clone();	}
 	
 	/*	Returns the synaptic response for a given neuron/class. */
-	public double synapticResponse(double[] dvParam, int iNeuronNumber){	return VectUtils.dotProduct(dvParam, fmatW[iNeuronNumber]);	}
+	public double synapticResponse(double[] dvParam, int iNeuronNumber) throws IOException{	return VectUtils.dotProduct(dvParam, fmatW[iNeuronNumber]);	}
 	
 	/*	Trains the model. */
-	public void trainModel(){
-		apdTruePos.clear();
+	public void trainModel(int iMaxIterations, double dEpsilon) throws IOException{apdTruePos.clear();
 		apdFalseNeg.clear();
 		
 		//	Initializing apdTruePos and apdFalseNeg
@@ -213,7 +207,7 @@ public class MultiClass {
 	}
 	
 	/*	Executes an epoch. */
-	double epoch(int iItNumber){
+	double epoch(int iItNumber) throws IOException{
 		double dErr = 0.;
 		double dRate = dLearningRate;
 				
@@ -271,7 +265,7 @@ public class MultiClass {
 	}
 	
 	/*	Runs tests on the test dataset and returns the error rate. */
-	public double test(int iItNumber){
+	public double test(int iItNumber) throws IOException{
 		double dErr = 0.;
 		
 		for(int iCurrentData = 0; iCurrentData < avdTestData.size(); iCurrentData++){
@@ -307,7 +301,7 @@ public class MultiClass {
 	}
 	
 	/*	Classifies given data. */
-	public int classify(double[] dvParam){
+	public int classify(double[] dvParam) throws IOException{
 		double dvSR[] = synapticResponses(dvParam);
 		
 		int iRes = 0;
@@ -323,7 +317,7 @@ public class MultiClass {
 	}
 	
 	/*	Returns an array containing the synaptic response of each neuron for given data. */
-	public double[] synapticResponses(double[] dvParam){
+	public double[] synapticResponses(double[] dvParam) throws IOException{
 		double res[] = new double[fmatW.length];
 		
 		for(int i = 0; i < fmatW.length; i++){

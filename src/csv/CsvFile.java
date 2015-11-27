@@ -51,7 +51,7 @@ public class CsvFile {
     private void init() throws IOException {
         lines = readFile(file);
         
-        data = new ArrayList<String[] >(lines.size());
+        data = new ArrayList<String[]>(lines.size());
         String sep = new Character(SEPARATOR).toString();
         for (String line : lines) {
             String[] oneData = line.split(sep);
@@ -70,6 +70,7 @@ public class CsvFile {
     	assert index<max_line: "index too high!";
     	
     	String[] target = data.get(index);
+    	    	
     	double[] dataline = new double[target.length-1];
     	for(int i=0; i<dataline.length; i++) 
     		dataline[i] = Double.parseDouble(target[i]);
@@ -79,9 +80,9 @@ public class CsvFile {
     
     public void InitHash() {
     	classe = new Hashtable<String,Integer>();
-    	classe.put("Iris-setosa",0);
-    	classe.put("Iris-versicolor",1);
-    	classe.put("Iris-virginica",2);
+    	classe.put("Iris-setosa",new Integer(0));
+    	classe.put("Iris-versicolor",new Integer(1));
+    	classe.put("Iris-virginica",new Integer (2));
     }
     
     public String getLabelStr(int index) {
@@ -100,7 +101,6 @@ public class CsvFile {
     	
     	String[] target = data.get(index);
     	String label = target[target.length-1];
-    	
     	return classe.get(label);
     }
     
