@@ -8,7 +8,6 @@ import java.util.HashMap;
 
 import csv.CsvFile;
 import perceptron.MultiClass;
-import perceptron.VectUtils;
 
 public class Iris {
 	public static void main(String args[]) throws IOException{
@@ -19,6 +18,7 @@ public class Iris {
 				
 		MultiClass mcPerceptron = new MultiClass(3, 4);
 		
+		//	Path de la sortie
 		String sOutputPath = "./output/iris/";
 		 
 		//	Chargement des données dans un ArrayList
@@ -46,6 +46,6 @@ public class Iris {
 			}
 		}
 		
-		//	Ecriture du fichier de sortie (A envoyer à GNU plot)
+		//	TODO : Ecriture du fichier de sortie (A envoyer à GNU plot)
 	}
 }
