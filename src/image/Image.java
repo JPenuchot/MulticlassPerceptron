@@ -1,3 +1,11 @@
+/*	Made by :
+ * 
+ * 		- Théophile Walter
+ * 		- Jules Pénuchot
+ * 
+ * Both from Paris-Sud University in Orsay, France
+ */
+
 package image;
 
 import mnisttools.MnistManager;
@@ -33,7 +41,7 @@ public class Image {
 		}
 		
 		//	Moulinette
-		mcPerceptron.trainModel(200, 5.);
+		mcPerceptron.trainModel(2000, 0., .05);
 		
 		int iImgWidth = mrDB.getImage(1).length, iImgHeight = mrDB.getImage(1)[0].length;
 		

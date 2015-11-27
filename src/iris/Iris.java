@@ -1,3 +1,11 @@
+/*	Made by :
+ * 
+ * 		- Théophile Walter
+ * 		- Jules Pénuchot
+ * 
+ * Both from Paris-Sud University in Orsay, France
+ */
+
 package iris;
 
 import java.io.IOException;
@@ -24,9 +32,13 @@ public class Iris {
 		for(int i = 0; i < db.getNumData() - 1; i++){
 			mcPerceptron.addTrainData(db.getData(i));
 			mcPerceptron.addTrainLabel(db.getLabelInt(i).intValue());
+			mcPerceptron.addTestData(db.getData(i));
+			mcPerceptron.addTestLabel(db.getLabelInt(i).intValue());
 		}
 		
-		mcPerceptron.trainModel(20, .001);
+		mcPerceptron.trainModel(2000, .001, .0005);
+		
+		System.out.println("Test error rate : " + mcPerceptron.test(0));
 						
 		HashMap<String, ArrayList<double[]>> hmPointClasses = new HashMap<String, ArrayList<double[]>>();
 		

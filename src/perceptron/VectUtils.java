@@ -1,3 +1,11 @@
+/*	Made by :
+ * 
+ * 		- Théophile Walter
+ * 		- Jules Pénuchot
+ * 
+ * Both from Paris-Sud University in Orsay, France
+ */
+
 package perceptron;
 
 public class VectUtils {

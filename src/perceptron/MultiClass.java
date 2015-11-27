@@ -1,5 +1,4 @@
-/*	
- * Made by :
+/*	Made by :
  * 
  * 		- Théophile Walter
  * 		- Jules Pénuchot
@@ -24,28 +23,28 @@ public class MultiClass {
 	//	Size of a parameter
 	private int iParamSize;
 	//	Learning rate
-	public double dLearningRate = 1.;
+	public double dLearningRate;
 	//	Learning rate multiplier
 	public double dLRMultiplier = .8;
 		
 	//	Neurons' parameters
-	double fmatW[][];
+	private double fmatW[][];
 	
 	//	Train/Test data ArrayLists
-	ArrayList<double[]> avdTrainData = new ArrayList<double[]>();
-	ArrayList<double[]> avdTestData = new ArrayList<double[]>();
+	private ArrayList<double[]> avdTrainData = new ArrayList<double[]>();
+	private ArrayList<double[]> avdTestData = new ArrayList<double[]>();
 	
 	//	Train/Test labels ArrayList
-	ArrayList<Integer> aiTrainLabels = new ArrayList<Integer>();
-	ArrayList<Integer> aiTestLabels = new ArrayList<Integer>();
+	private ArrayList<Integer> aiTrainLabels = new ArrayList<Integer>();
+	private ArrayList<Integer> aiTestLabels = new ArrayList<Integer>();
 	
 	//	True positive and false negative curves for each neuron
-	ArrayList<double[][]>  apdTruePos = new ArrayList<double[][]>();
-	ArrayList<double[][]>  apdFalseNeg = new ArrayList<double[][]>();
+	private ArrayList<double[][]>  apdTruePos = new ArrayList<double[][]>();
+	private ArrayList<double[][]>  apdFalseNeg = new ArrayList<double[][]>();
 	
 	//	Error curves for training and testing datasets
-	double[][] apdTrainError;
-	double[][] apdTestError;
+	private double[][] apdTrainError;
+	private double[][] apdTestError;
 	
 	/*	Initializes a multiclass perceptron.
 	 * All the input vectors must have '1' as first value. The parameter size doesn't include this value.
@@ -56,6 +55,10 @@ public class MultiClass {
 		
 		fmatW = new double[iClassAmt][iParamSize + 1];
 	}
+	
+	/*	========================
+	 *		ACCESS OPERATORS
+	 *	========================	*/
 	
 	/*	Adds a data vector to the avdTrainData ArrayList.
 	 * The data vector's size must be equal to iParamSize.
@@ -130,12 +133,15 @@ public class MultiClass {
 	/*	Returns the generated parameter for a given class. */
 	public double[] getClassParam(int iClass) throws IOException{	return fmatW[iClass].clone();	}
 	
-	/*	Returns the synaptic response for a given neuron/class. */
-	public double synapticResponse(double[] dvParam, int iNeuronNumber) throws IOException{	return VectUtils.dotProduct(dvParam, fmatW[iNeuronNumber]);	}
+	/*	==================
+	 *		ALGORITHMS
+	 *	==================	*/
 	
 	/*	Trains the model. */
-	public void trainModel(int iMaxIterations, double dEpsilon) throws IOException{apdTruePos.clear();
+	public void trainModel(int iMaxIterations, double dEpsilon, double dLR) throws IOException{apdTruePos.clear();
 		apdFalseNeg.clear();
+		
+		dLearningRate = dLR;
 		
 		//	Initializing apdTruePos and apdFalseNeg
 		int i = 0;
@@ -151,7 +157,7 @@ public class MultiClass {
 		//	Executes the epochs
 		i = 0;
 		for(; i < iMaxIterations && epoch(i) > dEpsilon; i++)
-			test(i);
+			test_(i);
 
 		//	Rezise arrays according to the number of epoch performed
 		//	This prevents the last point of the line to be linked to (0,0)
@@ -207,14 +213,11 @@ public class MultiClass {
 	}
 	
 	/*	Executes an epoch. */
-	double epoch(int iItNumber) throws IOException{
+	private double epoch(int iItNumber) throws IOException{
 		double dErr = 0.;
-		double dRate = dLearningRate;
-				
+		
+		//	Update loop
 		for(int iCurrentData = 0; iCurrentData < avdTrainData.size(); iCurrentData++){
-			int iLabel = 0;
-			double dMaxResp = Double.NEGATIVE_INFINITY;
-			
 			for(int iCurrentClass = 0; iCurrentClass < iClassAmt; iCurrentClass++){
 				//	Par rapport au cours :
 				//	dGk_ = ~Gk
@@ -228,18 +231,16 @@ public class MultiClass {
 				//	Model update
 				double vdParam[] = fmatW[iCurrentClass].clone();
 				double vdUpdate[] = avdTrainData.get(iCurrentData).clone();
-				VectUtils.multVect(vdUpdate, - dRate * (dGk - dGk_));
+				VectUtils.multVect(vdUpdate, - dLearningRate * (dGk - dGk_));
 				VectUtils.addVect(vdParam, vdUpdate);
 				
 				fmatW[iCurrentClass] = vdParam;
-				
-				//	Getting label
-				if(dMaxResp < dGk){
-					dMaxResp = dGk;
-					iLabel = iCurrentClass;
-				}
-			}
-			
+			}			
+		}
+		
+		//	Curve update and error computing
+		for(int iCurrentData = 0; iCurrentData < avdTrainData.size(); iCurrentData++){
+			int iLabel = classify_(avdTrainData.get(iCurrentData));
 			if(iLabel == aiTrainLabels.get(iCurrentData)){
 				apdTruePos.get(iLabel)[iItNumber][0] = iItNumber;
 				apdTruePos.get(iLabel)[iItNumber][1]++;
@@ -257,10 +258,9 @@ public class MultiClass {
 				apdTrainError[iItNumber][1]++;
 			}
 		}
-		System.out.println("It. " + iItNumber + "; Error : " + dErr);
 		
 		//	Learning rate update
-		dRate *= dLRMultiplier;
+		dLearningRate *= dLRMultiplier;
 		
 		return dErr;
 	}
@@ -278,11 +278,9 @@ public class MultiClass {
 				//	dGk_ = ~Gk
 				//	dGk = Gk
 				double dGk = Math.tanh(synapticResponse(avdTestData.get(iCurrentData), iCurrentClass));
-				double dGk_ = (aiTestLabels.get(iCurrentData) == iCurrentClass ? 1. : -1.);
 				
-				double dErrD = Math.pow((dGk - dGk_), 2) / 2.;
-				
-				dErr += dErrD;
+				//double dGk_ = (aiTestLabels.get(iCurrentData) == iCurrentClass ? 1. : -1.);				
+				//dErr += Math.pow((dGk - dGk_), 2) / 2.;
 				
 				//	Getting label
 				if(dMaxResp < dGk){
@@ -290,17 +288,48 @@ public class MultiClass {
 					iLabel = iCurrentClass;
 				}
 			}
-
-			if(iLabel != aiTestLabels.get(iCurrentData)){
-				apdTestError[iItNumber][0] = iItNumber;
-				apdTestError[iItNumber][1]++;
-			}
 			
+			if(iLabel != aiTestLabels.get(iCurrentData))
+				dErr++;
 		}
-				
 		return dErr;
 	}
 	
+	/*	Internal implpementation of test(), runs tests on the test dataset,
+	 * updates the test error rate curve and returns the error rate. */
+	private double test_(int iItNumber) throws IOException{
+		double dErr = 0.;
+		
+		for(int iCurrentData = 0; iCurrentData < avdTestData.size(); iCurrentData++){
+			int iLabel = 0;
+			double dMaxResp = Double.NEGATIVE_INFINITY;
+			
+			for(int iCurrentClass = 0; iCurrentClass < iClassAmt; iCurrentClass++){
+				//	Par rapport au cours :
+				//	dGk_ = ~Gk
+				//	dGk = Gk
+				double dGk = Math.tanh(synapticResponse(avdTestData.get(iCurrentData), iCurrentClass));
+				
+				//double dGk_ = (aiTestLabels.get(iCurrentData) == iCurrentClass ? 1. : -1.);				
+				//dErr += Math.pow((dGk - dGk_), 2) / 2.;
+				
+				//	Getting label
+				if(dMaxResp < dGk){
+					dMaxResp = dGk;
+					iLabel = iCurrentClass;
+				}
+			}
+			
+			if(iLabel != aiTestLabels.get(iCurrentData)){
+				apdTestError[iItNumber][0] = iItNumber;
+				apdTestError[iItNumber][1]++;
+				dErr++;
+			}	
+		}
+		
+		return dErr;
+	}
+		
 	/*	Classifies given data. */
 	public int classify(double[] dvInputParam) throws IOException{
 		if(dvInputParam.length != iParamSize)
@@ -326,6 +355,26 @@ public class MultiClass {
 		}
 		return iRes;
 	}
+	
+	/*	Internal implementation of classify(),
+	 * meant to be used with parameters that are already perceptron-ready. */
+	private int classify_(double[] dvParam) throws IOException{
+		double dvSR[] = synapticResponses(dvParam);
+		
+		int iRes = -1;
+		double dMax = Double.NEGATIVE_INFINITY;
+		
+		for(int i = 0; i < dvSR.length; i++){
+			if(dvSR[i] > dMax){
+				iRes = i;
+				dMax = dvSR[i];
+			}
+		}
+		return iRes;
+	}
+	
+	/*	Returns the synaptic response for a given neuron/class. */
+	public double synapticResponse(double[] dvParam, int iNeuronNumber) throws IOException{	return VectUtils.dotProduct(dvParam, fmatW[iNeuronNumber]);	}
 	
 	/*	Returns an array containing the synaptic response of each neuron for given data. */
 	public double[] synapticResponses(double[] dvParam) throws IOException{

@@ -17,7 +17,6 @@ public class CsvFile {
     private List<String[]> data;
     private Hashtable<String, Integer> classe;
     
-    
     private int max_line;
 
     public List<String> readFile(File file) throws IOException {
